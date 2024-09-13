@@ -1,43 +1,96 @@
+
+### Developed By: Thanjiyappan k
+### Register No: 212222240108
+
 # Ex.No: 03   COMPUTE THE AUTO FUNCTION(ACF)
-Date: 
+### Date: 
 
 ### AIM:
-To Compute the AutoCorrelation Function (ACF) of the data for the first 35 lags to determine the model
+To Compute the AutoCorrelation Function (ACF) of the power Consumption dataset and 
+to determine the model
 type to fit the data.
 ### ALGORITHM:
-1. Import the necessary packages
-2. Find the mean, variance and then implement normalization for the data.
-3. Implement the correlation using necessary logic and obtain the results
-4. Store the results in an array
-5. Represent the result in graphical representation as given below.
+1.Import the necessary packages.
+2.Calculate the mean and variance of the data.
+3.Implement normalization by scaling the data to have a mean of 0 and a variance of 1.
+4.Compute the correlation and store the results in an array.
+5.Represent the result graphically.
 ### PROGRAM:
-import matplotlib.pyplot as plt
-
+```
+import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.ar_model import AutoReg
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-data = [3, 16, 156, 47, 246, 176, 233, 140, 130,
-101, 166, 201, 200, 116, 118, 247,
-209, 52, 153, 232, 128, 27, 192, 168, 208,
-187, 228, 86, 30, 151, 18, 254,
-76, 112, 67, 244, 179, 150, 89, 49, 83, 147, 90,
-33, 6, 158, 80, 35, 186, 127]
+# Set seed for reproducibility
+np.random.seed(0)
 
-lags = range(35)
+# Load and preprocess data
+data = pd.read_csv('ev.csv')
+data['year'] = pd.to_datetime(data['year'])
+data = data.sort_values(by='year')
+data.set_index('year', inplace=True)
+data.dropna(inplace=True)
 
+# Plot the consumption data
+plt.figure(figsize=(12, 6))
+plt.plot(data['value'], label='Data')
+plt.xlabel('year')
+plt.ylabel('value')
+plt.legend()
+plt.title('')
+plt.show()
 
-#Pre-allocate autocorrelation table
+# Split into train and test data
+train_size = int(0.8 * len(data))
+train_data = data[:train_size]
+test_data = data[train_size:]
+y_train = train_data['value']
+y_test = test_data['value']
 
-#Mean
+# Compute and plot ACF for the first 35 lags
+plt.figure(figsize=(12, 6))
+plot_acf(data['value'], lags=35)
+plt.title('ACF of Consumption Data (First 35 Lags)')
+plt.show()
+# Fit an autoregressive model (AR)
+lag_order = 1  # you can adjust based on the ACF plot
+data['value'].corr(data['value'].shift(1))
+from statsmodels.tsa.ar_model import AutoReg
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.tsa.api import AutoReg
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+lag_order = 35 
+ar_model = AutoReg(y_train, lags=lag_order)
+ar_results = ar_model.fit()
 
-#Variance
+# Predictions
+y_pred = ar_results.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1, dynamic=False)
 
-#Normalized data
+# Compute MAE and RMSE
+mae = mean_absolute_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+variance = np.var(y_test)
 
-#Go through lag components one-by-one
-
-#display the graph
+print(f'Mean Absolute Error: {mae:.2f}')
+print(f'Root Mean Squared Error: {rmse:.2f}')
+print(f'Variance_testing: {variance:.2f}')
+```
 
 ### OUTPUT:
+#### VISUAL REPRESENTATION OF DATASET:
+![image](https://github.com/user-attachments/assets/a4af76fb-ba47-415e-b899-369a33c61a75)
 
-### RESULT:
-        Thus we have successfully implemented the auto correlation function in python.
+
+#### AUTO CORRELATION:
+![image](https://github.com/user-attachments/assets/7b820e12-e2b8-476a-8aed-4a9b7642426d)
+
+#### VALUES OF MAE,RMSE,VARIANCE:
+![image](https://github.com/user-attachments/assets/dc42464a-1ffa-4961-96e2-c2a1c54a32eb)
+
+
+
+### RESULT: 
+Thus, The python code for implementing auto correlation for power consumption is successfully executed.
