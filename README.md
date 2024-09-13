@@ -11,9 +11,13 @@ to determine the model
 type to fit the data.
 ### ALGORITHM:
 1.Import the necessary packages.
+
 2.Calculate the mean and variance of the data.
+
 3.Implement normalization by scaling the data to have a mean of 0 and a variance of 1.
+
 4.Compute the correlation and store the results in an array.
+
 5.Represent the result graphically.
 ### PROGRAM:
 ```
